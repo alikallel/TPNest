@@ -1,8 +1,9 @@
-import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Put, Query, Req, Res } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, NotFoundException, Param, ParseIntPipe, Post, Put, Query, Req, Res } from '@nestjs/common';
 import { Todo } from './entities/todo.entity';
 import { GetPaginatedTodoDto } from './dto/get-paginated-todo.dto';
 import { AddTodoDto } from './dto/add-todo.dto';
 import { TodoService } from './todo.service';
+import { UpperAndFusionPipe } from 'src/pipes/upper-and-fusion/upper-and-fusion.pipe';
 //import { Request, Response } from 'express';
 
 @Controller('todo')
@@ -26,7 +27,7 @@ getTodos(
     @Query() myPrams: GetPaginatedTodoDto
 )
 {
-    console.log(myPrams)
+   // console.log(myPrams instanceof GetPaginatedTodoDto);
     return this.todoService.getTodos();
 }
 
@@ -44,7 +45,8 @@ getTodo(
 
 }*/
 @Get(':id')
-getTodo(@Param('id') id: number) {
+getTodo(@Param('id', new ParseIntPipe(
+    {errorHttpStatusCode: HttpStatus.BAD_REQUEST})) id) {
   const todo = this.todoService.getTodoById(id);
   if (!todo) {
     throw new NotFoundException(`Todo with id ${id} does not exist.`);
@@ -54,7 +56,7 @@ getTodo(@Param('id') id: number) {
 
 @Post()
 addTodos(
-    // @Body() newTodo: Todo
+    // @Body(ValidationPipe) newTodo: Todo
      @Body() newTodo: AddTodoDto
 
 )
@@ -62,7 +64,7 @@ addTodos(
    return this.todoService.addTodos(newTodo);
 }
 @Delete(':id')
-  deleteTodo(@Param('id') id: number) {
+  deleteTodo(@Param('id',ParseIntPipe) id) {
     const result = this.todoService.deleteTodoById(id);
     console.log(result);
     if (!result) {
@@ -72,12 +74,19 @@ addTodos(
   }
 
   @Put(':id')
-  modifyTodos(@Param('id') id: number, @Body() updatedTodo: Partial<AddTodoDto>) {
+  modifyTodos(@Param('id', ParseIntPipe) id, @Body() updatedTodo: Partial<AddTodoDto>) {
     const todo = this.todoService.updateTodoById(id, updatedTodo);
     if (!todo) {
       throw new NotFoundException(`Todo with id ${id} does not exist.`);
     }
     return todo;
+  }
+  @Post('pipe')
+  testPipe(
+    //@Param('data' ,UpperAndFusionPipe) ParamData,
+    @Body(UpperAndFusionPipe) data)
+  {
+    return data
   }
 }
 /*@Delete(':id')
