@@ -5,9 +5,12 @@ import { TodoModule } from './todo/todo.module';
 import { FirstMiddleware } from './middlewares/first/first.middleware';
 import { logger } from './middlewares/logger.middleware';
 import { HelmetMiddleware } from '@nest-middlewares/helmet';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [TodoModule],
+  imports: [TodoModule, ConfigModule.forRoot({
+    isGlobal: true
+  })],
   controllers: [AppController],
   providers: [AppService],
 })
