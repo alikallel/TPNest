@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { TodoModule } from './todo/todo.module';
 import { FirstMiddleware } from './middlewares/first/first.middleware';
 import { logger } from './middlewares/logger.middleware';
+import { HelmetMiddleware } from '@nest-middlewares/helmet';
 
 @Module({
   imports: [TodoModule],
@@ -13,11 +14,16 @@ import { logger } from './middlewares/logger.middleware';
 export class AppModule implements NestModule{
   configure(consumer: MiddlewareConsumer) {
   //consumer.apply(FirstMiddleware).forRoutes('todo')  }
-  consumer.apply(FirstMiddleware, logger).forRoutes({
+  //2 methode (as express or as nest)
+  //HelmetMiddleware.configure({});
+  consumer.apply(FirstMiddleware).forRoutes({
     path: 'todo' , method: RequestMethod.GET
   },
   {
     path: 'todo*' , method: RequestMethod.DELETE
-  }) ; }
+  })
+  .apply(logger).forRoutes ('')
+  .apply(HelmetMiddleware).forRoutes('');
+  ; }
 
 }
