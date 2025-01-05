@@ -10,6 +10,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CvModule } from './cv/cv.module';
 import * as dotenv from 'dotenv';
 import { CvEntity } from './cv/entities/cv.entity/cv.entity';
+import { UserModule } from './user/user.module';
+import { UserEntity } from './user/entities/user.entity/user.entity';
 
 dotenv.config()
 
@@ -23,9 +25,9 @@ dotenv.config()
     username: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
-    entities: [CvEntity],
+    entities: [CvEntity ,UserEntity],
     synchronize: true, 
-  }), CvModule],
+  }), CvModule, UserModule],
   controllers: [AppController],
   providers: [AppService],
 })
