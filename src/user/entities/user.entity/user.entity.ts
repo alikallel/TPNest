@@ -1,4 +1,5 @@
 import { CvEntity } from "src/cv/entities/cv.entity/cv.entity";
+import { UserRoleEnum } from "src/enums/userrole.enum";
 import { TimestampEntites } from "src/Generics/timestamp.entites";
 import { Column, Entity, OneToMany, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
@@ -25,4 +26,19 @@ export class UserEntity extends TimestampEntites{
         cv => cv.user
     )
     cvs:CvEntity[]
+
+    @Column()
+    password:string;
+
+    @Column()
+    salt:string;
+
+    @Column(
+        {
+            type:'enum',
+          enum: UserRoleEnum  ,
+          default: UserRoleEnum.USER
+        }
+    )
+    role:string;
 }
